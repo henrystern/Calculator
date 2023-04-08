@@ -4,7 +4,7 @@ export const buttonFuncs = {
   "↑": { primary: "test", secondary: "" },
   "↓": { primary: "test", secondary: "" },
   "ON|OFF": { primary: "test", secondary: "" },
-  "2ND": { primary: "test", secondary: "" },
+  "2ND": { primary: "toggleSecondary", secondary: "toggleSecondary" },
   CF: { primary: "test", secondary: "" },
   NPV: { primary: "test", secondary: "" },
   IRR: { primary: "test", secondary: "" },

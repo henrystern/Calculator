@@ -1,12 +1,14 @@
 import { buttonFuncs, keyFuncs } from "./mappings.js";
 
 export class Calculator {
-  constructor(display) {
-    this.display = display;
-    this.display.mode = "input";
+  constructor(indicators, letters, numbers) {
+    this.indicators = indicators;
+    this.letters = letters;
+    this.numbers = numbers;
+    this.numbers.mode = "input";
 
-    this.buttonFuncs = buttonFuncs
-    this.keyFuncs = keyFuncs
+    this.buttonFuncs = buttonFuncs;
+    this.keyFuncs = keyFuncs;
 
     this.mode = "primary";
 
@@ -14,10 +16,17 @@ export class Calculator {
   }
 
   handleButton(button) {
-    if (!this.buttonFuncs.hasOwnProperty(button) || !this.buttonFuncs[button].hasOwnProperty(this.mode)) {
+    if (
+      !this.buttonFuncs.hasOwnProperty(button) ||
+      !this.buttonFuncs[button].hasOwnProperty(this.mode)
+    ) {
       return;
     }
+    console.log(button, this.mode, this.buttonFuncs[button][this.mode]);
     this[this.buttonFuncs[button][this.mode]](button);
+    if (this.mode === "secondary" && button != "2ND") {
+      this.mode = "primary";
+    }
     this.updateDisplay();
   }
 
@@ -35,6 +44,15 @@ export class Calculator {
 
   delete() {
     this.currentOperand = this.currentOperand.toString().slice(0, -1);
+  }
+
+  toggleSecondary() {
+    console.log(this.mode);
+    this.mode === "secondary"
+      ? (this.mode = "primary")
+      : (this.mode = "secondary");
+    console.log(this.mode);
+    return
   }
 
   appendNumber(number) {
@@ -101,6 +119,9 @@ export class Calculator {
   }
 
   updateDisplay() {
-    this.display.innerText = this.getDisplayNumber(this.currentOperand);
+    this.numbers.innerText = this.getDisplayNumber(this.currentOperand);
+    this.mode === "secondary"
+      ? (this.indicators.innerText = "2ND")
+      : (this.indicators.innerText = "");
   }
 }
