@@ -1,73 +1,135 @@
-<!DOCTYPE html>
+-!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>FA II Plus Calculator</title>
-  <link href="styles.css" rel="stylesheet">
-  <script src="script.js" defer></script>
-</head>
-<body>
-  <div class="calculator-grid">
-    <div class="output">
-      <div data-previous-operand class="indicators"></div>
-      <div data-current-operand class="display"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>FA II Plus Calculator</title>
+    <link href="styles.css" rel="stylesheet" />
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <div class="calculator">
+      <div class="top">
+        <span style="font-weight: bold"
+          >FA II
+          <span style="font-weight: normal; font-style: italic"
+            >Plus</span
+          ></span
+        >
+
+        <div class="output">
+          <div class="indicators"></div>
+          <div class="display"></div>
+        </div>
+
+        <div class="mono">Financial Analyst</div>
+      </div>
+
+      <div class="inputs">
+        <div class="button_column">
+          <p class="secondary">QUIT</p>
+          <button class="small-button dark">CPT</button>
+          <p class="spacer"></p>
+          <button class="small-button contrast">2ND</button>
+          <p class="secondary">xP/Y</p>
+          <button class="small-button light">N</button>
+          <p class="secondary">K</p>
+          <button class="small-button dark">%</button>
+          <p class="secondary">HYP</p>
+          <button class="small-button dark">INV</button>
+          <p class="secondary">eᵡ</p>
+          <button class="small-button dark">LN</button>
+          <p class="secondary">ROUND</p>
+          <button class="small-button dark">STO</button>
+          <p class="spacer"></p>
+          <button class="small-button dark">RCL</button>
+          <p class="secondary">CLR WORK</p>
+          <button class="dark">CE|C</button>
+        </div>
+
+        <div class="button_column">
+          <p class="secondary">SET</p>
+          <button class="small-button dark">ENTER</button>
+          <p class="spacer"></p>
+          <button class="small-button dark">CF</button>
+          <p class="secondary">P/Y</p>
+          <button class="small-button light">I/Y</button>
+          <p class="spacer"></p>
+          <button class="small-button dark">√𝑥</button>
+          <p class="secondary">SIN</p>
+          <button class="small-button dark">(</button>
+          <p class="secondary">DATA</p>
+          <button>7</button>
+          <p class="secondary">DEPR</p>
+          <button>4</button>
+          <p class="secondary">DATE</p>
+          <button>1</button>
+          <p class="secondary">MEM</p>
+          <button>0</button>
+        </div>
+
+        <div class="button_column">
+          <p class="secondary">DEL</p>
+          <button class="small-button dark">↑</button>
+          <p class="spacer"></p>
+          <button class="small-button dark">NPV</button>
+          <p class="secondary">AMORT</p>
+          <button class="small-button light">PV</button>
+          <p class="spacer"></p>
+          <button class="small-button dark">𝑥²</button>
+          <p class="secondary">COS</p>
+          <button class="small-button dark">)</button>
+          <p class="secondary">STAT</p>
+          <button>8</button>
+          <p class="secondary">◺%</p>
+          <button>5</button>
+          <p class="secondary">ICONV</p>
+          <button>2</button>
+          <p class="secondary">FORMAT</p>
+          <button>.</button>
+        </div>
+
+        <div class="button_column">
+          <p class="secondary">INS</p>
+          <button class="small-button dark">↓</button>
+          <p class="spacer"></p>
+          <button class="small-button dark">IRR</button>
+          <p class="secondary">BGN</p>
+          <button class="small-button light">PMT</button>
+          <p class="spacer"></p>
+          <button class="small-button dark">1/𝑥</button>
+          <p class="secondary">TAN</p>
+          <button class="small-button dark">yᵡ</button>
+          <p class="secondary">BOND</p>
+          <button>9</button>
+          <p class="secondary">BRKEVN</p>
+          <button>6</button>
+          <p class="secondary">PROFIT</p>
+          <button>3</button>
+          <p class="secondary">RESET</p>
+          <button>+|-</button>
+        </div>
+
+        <div class="button_column">
+          <p class="spacer"></p>
+          <button class="small-button dark">ON|OFF</button>
+          <p class="spacer"></p>
+          <button class="small-button dark">→</button>
+          <p class="secondary">CLR TVM</p>
+          <button class="small-button light">FV</button>
+          <p class="secondary">RAND</p>
+          <button class="dark">÷</button>
+          <p class="secondary">𝑥!</p>
+          <button class="offset-down dark dark">×</button>
+          <p class="secondary">nPr</p>
+          <button class="offset-down dark">-</button>
+          <p class="secondary">nCr</p>
+          <button class="offset-down dark">+</button>
+          <p class="secondary">ANS</p>
+          <button class="offset-down dark">=</button>
+        </div>
+      </div>
     </div>
-
-    <button data-operation class="small-button dark">CPT</button>
-    <button data-operation class="small-button dark">Enter</button>
-    <button data-operation class="small-button dark">↑</button>
-    <button data-operation class="small-button dark">↓</button>
-    <button data-operation class="small-button dark">On|Off</button>
-
-    <button data-operation class="small-button contrast">2ND</button>
-    <button data-operation class="small-button dark">CF</button>
-    <button data-operation class="small-button dark">NPV</button>
-    <button data-operation class="small-button dark">IRR</button>
-    <button data-operation class="small-button dark">→</button>
-
-    <button data-operation class="small-button light">N</button>
-    <button data-operation class="small-button light">I/Y</button>
-    <button data-operation class="small-button light">PV</button>
-    <button data-operation class="small-button light">PMT</button>
-    <button data-operation class="small-button light">FV</button>
-
-    <button data-operation class="small-button dark">%</button>
-    <button data-operation class="small-button dark">sqrt</button>
-    <button data-operation class="small-button dark">^2</button>
-    <button data-operation class="small-button dark">1/x</button>
-    <button data-operation class="dark">÷</button>
-
-    <button data-operation class="small-button dark">INV</button>
-    <button data-operation class="small-button dark">(</button>
-    <button data-operation class="small-button dark">)</button>
-    <button data-operation class="small-button dark">y^x</button>
-    <button data-operation class="offset-down dark dark">X</button>
-
-    <button data-operation class="small-button dark">LN</button>
-    <button data-number>7</button>
-    <button data-number>8</button>
-    <button data-number>9</button>
-    <button data-operation class="offset-down dark">-</button>
-
-    <button data-operation class="small-button dark">STO</button>
-    <button data-number>4</button>
-    <button data-number>5</button>
-    <button data-number>6</button>
-    <button data-operation class="offset-down dark">+</button>
-
-    <button data-operation class="small-button dark">RCL</button>
-    <button data-number>1</button>
-    <button data-number>2</button>
-    <button data-number>3</button>
-    <button data-operation class="offset-down dark">=</button>
-
-    <button data-operation class="dark">CE|C</button>
-    <button data-number>0</button>
-    <button data-number>.</button>
-    <button data-number>+/-</button>
-
-  </div>
-</body>
+  </body>
 </html>

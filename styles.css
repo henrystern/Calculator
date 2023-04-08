@@ -1,45 +1,109 @@
 *, *::before, *::after {
     box-sizing: border-box;
-    font-family: Gotham Rounded, sans-serif;
+    font-family: Calibri, sans-serif;
     font-weight: normal;
   }
   
   body {
     padding: 0;
     margin: 0;
+    background: black;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  
+  .calculator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 1rem 1rem 10% 10%;
     background: #202020;
   }
-  
-  .calculator-grid {
-    display: grid;
-    justify-content: center;
-    align-content: center;
-    min-height: 100vh;
-    grid-template-columns: repeat(5, 125px);
-    grid-template-rows: minmax(120px, auto) repeat(30, 60px);
+
+  .top {
+    margin-top: 1.5rem;
+    margin-left: .5rem;
+    margin-right: .5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    font-size: 2.5rem;
+    color: Black;
+    background-color:#9e9995;
+    border-radius: 10% 10% 20% 20%;
+    width: 30rem;
+    padding-bottom: 1rem;
+  }
+
+  .mono {
+    font-family: monaco, monospace;
+    font-size: 1.5rem;
+  }
+
+  .output {
+    border: .3rem solid white;
+    background-color: #8e9a84;
+    border-radius: 1rem;
+    margin: 1rem;
+    min-width: 98%;
+    min-height: 5rem;
   }
   
-  .calculator-grid > button {
+  .output .indicators {
+    font-size: .5rem;
+  }
+
+  .output .display {
+    margin-top: 1rem;
+    margin-right: .5rem;
+    text-align: right;
+  }
+
+  .inputs {
+    display: flex;
+    margin-bottom: 2rem;
+  }
+
+  .button_column {
+    display: flex;
+    flex-direction: column;
+    margin: .5rem;
+  }
+
+  .button_column > button {
     cursor: pointer;
     margin: 0;
-    font-size: 1.5rem;
+    margin-top: .1rem;
+    font-size: 1.3rem;
+    width: 4.8rem;
+    height: 3rem;
     border: 0px solid white;
-    border-radius: 10% 10% 50% 50%;
+    border-radius: 10% 10% 30% 30%;
     outline: none;
     background-color:#9e9995;
     color: white;
   }
   
-  .calculator-grid > button:hover {
+  .button_column > button:hover {
     opacity: .7;
   }
   
+  .button_column > .unimplemented {
+    opacity: .35 !important;
+    cursor: default !important;
+  }
+
   .small-button {
-    grid-row: span 1 !important;
+    height: 2.3rem !important;
   } 
 
   .dark {
-    background-color: #2b2b2b !important;
+    background-color: #0e0d0d !important;
   }
 
   .light {
@@ -55,22 +119,12 @@
   .secondary {
     text-align: center;
     color: #c8c1a1 !important;
+    margin: 0;
   }
 
-  .output {
-    grid-column: 1 / -1;
-    background-color: #8e9a84;
-    color: rgba(0, 0, 0);
-    font-size: 2.5rem;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-around;
-    flex-direction: column;
-    padding: 10px;
-    word-wrap: break-word;
-    word-break: break-all;
+  .spacer {
+    text-align: center;
+    color: #c8c1a1 !important;
+    margin: .6rem;
   }
-  
-  .output .indicators {
-    font-size: .5rem;
-  }
+
