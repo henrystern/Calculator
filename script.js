@@ -12,7 +12,6 @@ buttons.forEach((button) => {
 
 document.addEventListener("keydown", (event) => {
   const key = event.key;
-  // console.log(key);
   if (key === "/") {
     event.preventDefault(); // quick search on firefox
   }
