@@ -1,31 +1,51 @@
-import { buttonFuncs, keyFuncs } from "./mappings.js";
+import { primaryToSecondary, buttonFuncs, keyFuncs } from "./mappings.js";
 
 export class Calculator {
   constructor(indicators, letters, numbers) {
-    this.indicators = indicators;
-    this.letters = letters;
-    this.numbers = numbers;
-    this.numbers.mode = "input";
+    this.displayIndicators = indicators;
+    this.displayLetters = letters;
+    this.displayNumbers = numbers;
+    this.displayNumbers.mode = "input";
 
+    this.secondaryButtons = primaryToSecondary;
     this.buttonFuncs = buttonFuncs;
     this.keyFuncs = keyFuncs;
 
-    this.mode = "primary";
+    this.calculatorMode = "primary";
+    this.indicators = {
+            "2nd": false,
+            "INV": false,
+            "HYP": false,
+            "COMPUTE": false,
+            "ENTER": false,
+            "SET": false,
+            "⇅": false,
+            "DEL": false,
+            "INS": false,
+            "BGN": false,
+            "RAD": false,
+            "◁": false,
+            "⁎": false,
+    }
 
     this.clear();
   }
 
   handleButton(button) {
-    if (
-      !this.buttonFuncs.hasOwnProperty(button) ||
-      !this.buttonFuncs[button].hasOwnProperty(this.mode)
-    ) {
+    if (!this.buttonFuncs.hasOwnProperty(button)) {
       return;
     }
-    console.log(button, this.mode, this.buttonFuncs[button][this.mode]);
-    this[this.buttonFuncs[button][this.mode]](button);
-    if (this.mode === "secondary" && button != "2ND") {
-      this.mode = "primary";
+    if (this.indicators["2nd"] && button != "2ND") {
+      if (this.buttonFuncs[button].hasOwnProperty("secondary")) {
+        this[this.buttonFuncs[button]["secondary"]](this.secondaryButtons[button]);
+      }
+      else {
+        this[this.buttonFuncs[button]["primary"]](button);
+      }
+      this.toggleSecondary()
+    }
+    else {
+      this[this.buttonFuncs[button][this.calculatorMode]](button);
     }
     this.updateDisplay();
   }
@@ -40,27 +60,35 @@ export class Calculator {
     this.currentOperand = "";
     this.previousOperand = "";
     this.operation = undefined;
+    this.displayNumbers.mode = "answer"
   }
 
   delete() {
-    this.currentOperand = this.currentOperand.toString().slice(0, -1);
+    if (this.displayNumbers.mode === "input") {
+      this.currentOperand = this.currentOperand.toString().slice(0, -1);
+    }
   }
 
   toggleSecondary() {
-    console.log(this.mode);
-    this.mode === "secondary"
-      ? (this.mode = "primary")
-      : (this.mode = "secondary");
-    console.log(this.mode);
-    return
+    this.indicators["2nd"] = !this.indicators["2nd"];
   }
 
   appendNumber(number) {
+    if (this.displayNumbers.mode === "answer") {
+      this.currentOperand = ""
+      this.displayNumbers.mode = "input"
+    }
     if (number === "." && this.currentOperand.includes(".")) return;
     this.currentOperand = this.currentOperand.toString() + number.toString();
   }
 
-  chooseOperation(operation) {
+  instantOperation(operation) {
+    if (this.currentOperand !== "") {
+      return
+    }
+  }
+
+  infixOperation(operation) {
     if (this.currentOperand === "") return;
     if (this.previousOperand !== "") {
       this.compute();
@@ -72,8 +100,8 @@ export class Calculator {
 
   compute() {
     let computation;
-    const prev = parseFloat(this.previousOperand);
-    const current = parseFloat(this.currentOperand);
+    let prev = parseFloat(this.previousOperand);
+    let current = parseFloat(this.currentOperand);
     if (isNaN(prev) || isNaN(current)) return;
     switch (this.operation) {
       case "+":
@@ -88,15 +116,42 @@ export class Calculator {
       case "÷":
         computation = prev / current;
         break;
-      case "%":
-        computation = prev / 100;
+      case "yᵡ":
+        computation = prev ** current;
+        break;
+      case "nPr":
+        if (!Number.isInteger(prev) || !Number.isInteger(current)) {
+          computation = "Error 2"
+          break
+        }
+        let k = BigInt(prev - current);
+        let n = BigInt(prev);
+        let perms = this.permutate(n, k);
+        computation = typeof perms === 'BigInt' ? perms : "Error 2";
+        break;
+      case "nCr":
+        let combs = this.factorial(prev) / (this.factorial(current) * this.factorial(prev - current))
+        computation = typeof combs === 'number' ? combs : "Error 2";
         break;
       default:
         return;
     }
     this.currentOperand = computation;
+    this.displayNumbers.mode = "answer";
     this.operation = undefined;
     this.previousOperand = "";
+  }
+
+  permutate(n, k) {
+      if (n < 0 || k < 0) {
+          return undefined;
+      }
+      let result = k + BigInt(1);
+      for (let i = result + BigInt(1); i <= n; i++) {
+          console.log(result, i)
+          result *= i;
+      }
+      return result;
   }
 
   getDisplayNumber(number) {
@@ -119,9 +174,13 @@ export class Calculator {
   }
 
   updateDisplay() {
-    this.numbers.innerText = this.getDisplayNumber(this.currentOperand);
-    this.mode === "secondary"
-      ? (this.indicators.innerText = "2ND")
-      : (this.indicators.innerText = "");
+    this.displayNumbers.innerText = this.getDisplayNumber(this.currentOperand);
+    this.displayIndicators.forEach(indicator => {
+      const display_active = indicator.classList.contains("active")
+      const calc_active = this.indicators[indicator.innerText]
+      if (display_active != calc_active) {
+        indicator.classList.toggle("active")
+      }
+    });
   }
 }

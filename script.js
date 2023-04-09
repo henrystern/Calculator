@@ -2,7 +2,7 @@ import { Calculator } from "./calculator.js";
 
 const buttons = document.querySelectorAll("button");
 
-const indicators = document.querySelector(".indicators");
+const indicators = document.querySelectorAll(".indicator");
 const letters = document.querySelector(".letters");
 const numbers = document.querySelector(".numbers");
 const calculator = new Calculator(indicators, letters, numbers);

@@ -75,6 +75,14 @@
     text-align: center;
   }
 
+  .indicator {
+    color: #8e9a84;
+  }
+
+  .indicator.active {
+    color: black !important;
+  }
+
   .output .letters {
     margin-left: .5rem;
     text-align: left;
