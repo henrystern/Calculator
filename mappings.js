@@ -1,6 +1,6 @@
 export const primaryToSecondary = {
   CPT: "QUIT",
-  ENTER: "SET",
+  // ENTER: "SET",
   "↑": "DEL",
   "↓": "INS",
   "ON|OFF": "",
@@ -47,7 +47,7 @@ export const primaryToSecondary = {
 
 export const buttonFuncs = {
   CPT: { primary: "test", secondary: "quit" },
-  ENTER: { primary: "test", secondary: "" },
+  // ENTER: { primary: "test", secondary: "" },
   "↑": { primary: "test", secondary: "" },
   "↓": { primary: "test", secondary: "" },
   "ON|OFF": { primary: "test", secondary: "" },
@@ -89,7 +89,7 @@ export const buttonFuncs = {
   "CE|C": { primary: "clear", secondary: "" },
   0: { primary: "appendNumber", secondary: "" },
   ".": { primary: "appendNumber", secondary: "" },
-  "+|-": { primary: "instantOperation", secondary: "" },
+  "+|-": { primary: "changeSign", secondary: "" },
 };
 
 export const keyFuncs = {

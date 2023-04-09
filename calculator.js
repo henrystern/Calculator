@@ -74,6 +74,17 @@ export class Calculator {
     this.currentOperand = this.currentOperand.toString() + number.toString();
   }
 
+  changeSign() {
+    if (this.currentOperand === "") {
+      let previous = parseFloat(this.previousOperand);
+      this.previousOperand = -1 * previous;
+    }
+    if (this.currentOperand) {
+      let current = parseFloat(this.currentOperand);
+      this.currentOperand = -1 * current;
+    }
+  }
+
   instantOperation(operation) {
     this.operation = operation;
     if (this.currentOperand === "") {
@@ -124,9 +135,6 @@ export class Calculator {
       case "nCr":
         // let combs = this.factorial(prev) / (this.factorial(current) * this.factorial(prev - current))
         computation = typeof combs === "number" ? combs : "Error 2";
-        break;
-      case "+|-":
-        computation = -1 * current;
         break;
       case "%":
         computation = current / 100;
