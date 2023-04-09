@@ -5,7 +5,6 @@ export class Calculator {
     this.displayIndicators = indicators;
     this.displayLetters = letters;
     this.displayNumbers = numbers;
-    this.displayNumbers.mode = "input";
 
     this.secondaryButtons = primaryToSecondary;
     this.buttonFuncs = buttonFuncs;
@@ -13,38 +12,34 @@ export class Calculator {
 
     this.calculatorMode = "primary";
     this.indicators = {
-            "2nd": false,
-            "INV": false,
-            "HYP": false,
-            "COMPUTE": false,
-            "ENTER": false,
-            "SET": false,
-            "⇅": false,
-            "DEL": false,
-            "INS": false,
-            "BGN": false,
-            "RAD": false,
-            "◁": false,
-            "⁎": false,
-    }
+      "2nd": false,
+      INV: false,
+      HYP: false,
+      COMPUTE: false,
+      ENTER: false,
+      SET: false,
+      "⇅": false,
+      DEL: false,
+      INS: false,
+      BGN: false,
+      RAD: false,
+      "◁": false,
+      "⁎": false,
+    };
 
     this.clear();
   }
 
   handleButton(button) {
-    if (!this.buttonFuncs.hasOwnProperty(button)) {
-      return;
-    }
+    if (!this.buttonFuncs.hasOwnProperty(button)) return;
     if (this.indicators["2nd"] && button != "2ND") {
       if (this.buttonFuncs[button].hasOwnProperty("secondary")) {
-        this[this.buttonFuncs[button]["secondary"]](this.secondaryButtons[button]);
+        this[this.buttonFuncs[button]["secondary"]](
+          this.secondaryButtons[button]
+        );
       }
-      else {
-        this[this.buttonFuncs[button]["primary"]](button);
-      }
-      this.toggleSecondary()
-    }
-    else {
+      this.toggleSecondary();
+    } else {
       this[this.buttonFuncs[button][this.calculatorMode]](button);
     }
     this.updateDisplay();
@@ -60,12 +55,13 @@ export class Calculator {
     this.currentOperand = "";
     this.previousOperand = "";
     this.operation = undefined;
-    this.displayNumbers.mode = "answer"
   }
 
   delete() {
-    if (this.displayNumbers.mode === "input") {
+    if (this.currentOperand !== "") {
       this.currentOperand = this.currentOperand.toString().slice(0, -1);
+      this.currentOperand =
+        this.currentOperand === "" ? " " : this.currentOperand;
     }
   }
 
@@ -74,26 +70,23 @@ export class Calculator {
   }
 
   appendNumber(number) {
-    if (this.displayNumbers.mode === "answer") {
-      this.currentOperand = ""
-      this.displayNumbers.mode = "input"
-    }
     if (number === "." && this.currentOperand.includes(".")) return;
     this.currentOperand = this.currentOperand.toString() + number.toString();
   }
 
   instantOperation(operation) {
-    if (this.currentOperand !== "") {
-      return
+    this.operation = operation;
+    if (this.currentOperand === "") {
+      this.currentOperand = this.previousOperand;
+      this.previousOperand = "";
     }
+    if (this.currentOperand) this.compute();
   }
 
   infixOperation(operation) {
-    if (this.currentOperand === "") return;
-    if (this.previousOperand !== "") {
-      this.compute();
-    }
     this.operation = operation;
+    if (this.currentOperand === "") return;
+    if (this.previousOperand !== "") this.compute();
     this.previousOperand = this.currentOperand;
     this.currentOperand = "";
   }
@@ -102,7 +95,6 @@ export class Calculator {
     let computation;
     let prev = parseFloat(this.previousOperand);
     let current = parseFloat(this.currentOperand);
-    if (isNaN(prev) || isNaN(current)) return;
     switch (this.operation) {
       case "+":
         computation = prev + current;
@@ -121,37 +113,45 @@ export class Calculator {
         break;
       case "nPr":
         if (!Number.isInteger(prev) || !Number.isInteger(current)) {
-          computation = "Error 2"
-          break
+          computation = "Error 2";
+          break;
         }
         let k = BigInt(prev - current);
         let n = BigInt(prev);
-        let perms = this.permutate(n, k);
-        computation = typeof perms === 'BigInt' ? perms : "Error 2";
+        // let perms = this.permutate(n, k);
+        computation = typeof perms === "BigInt" ? perms : "Error 2";
         break;
       case "nCr":
-        let combs = this.factorial(prev) / (this.factorial(current) * this.factorial(prev - current))
-        computation = typeof combs === 'number' ? combs : "Error 2";
+        // let combs = this.factorial(prev) / (this.factorial(current) * this.factorial(prev - current))
+        computation = typeof combs === "number" ? combs : "Error 2";
+        break;
+      case "+|-":
+        computation = -1 * current;
+        break;
+      case "%":
+        computation = current / 100;
+        break;
+      case "√𝑥":
+        computation = current ** (1 / 2);
+        break;
+      case "𝑥²":
+        computation = current ** 2;
+        break;
+      case "1/𝑥":
+        computation = current ** -1;
+        break;
+      case "LN":
+        computation = Math.log(current);
+        break;
+      case "eᵡ":
+        computation = Math.E ** current;
         break;
       default:
         return;
     }
-    this.currentOperand = computation;
-    this.displayNumbers.mode = "answer";
+    this.currentOperand = "";
     this.operation = undefined;
-    this.previousOperand = "";
-  }
-
-  permutate(n, k) {
-      if (n < 0 || k < 0) {
-          return undefined;
-      }
-      let result = k + BigInt(1);
-      for (let i = result + BigInt(1); i <= n; i++) {
-          console.log(result, i)
-          result *= i;
-      }
-      return result;
+    this.previousOperand = computation;
   }
 
   getDisplayNumber(number) {
@@ -174,13 +174,16 @@ export class Calculator {
   }
 
   updateDisplay() {
-    this.displayNumbers.innerText = this.getDisplayNumber(this.currentOperand);
-    this.displayIndicators.forEach(indicator => {
-      const display_active = indicator.classList.contains("active")
-      const calc_active = this.indicators[indicator.innerText]
-      if (display_active != calc_active) {
-        indicator.classList.toggle("active")
-      }
+    console.log(this.previousOperand, this.operation, this.currentOperand);
+    this.displayNumbers.innerText =
+      this.currentOperand !== ""
+        ? this.getDisplayNumber(this.currentOperand)
+        : this.getDisplayNumber(this.previousOperand);
+
+    this.displayIndicators.forEach((indicator) => {
+      const display_active = indicator.classList.contains("active");
+      const calc_active = this.indicators[indicator.innerText];
+      if (display_active != calc_active) indicator.classList.toggle("active");
     });
   }
 }
