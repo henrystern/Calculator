@@ -31,7 +31,10 @@ export class Calculator {
   }
 
   getAlternateButton(primaryButton, indicator, mode) {
-    if (!["2ND", "INV", "HYP"].includes(primaryButton)) {
+    if (indicator === "2nd" && primaryButton !== "2ND") {
+      this.indicators[indicator] = false;
+    }
+    else if (!["2ND", "INV", "HYP"].includes(primaryButton)) {
       this.indicators[indicator] = false;
     }
     return this.buttonFuncs[primaryButton].hasOwnProperty(mode)
