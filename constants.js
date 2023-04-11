@@ -6,7 +6,7 @@ export const buttonFuncs = {
   "↓": { primary: "", secondary: "INS" },
   "ON|OFF": { primary: "toggleOn" },
   // row 2
-  "2ND": { primary: "toggleSecondary" },
+  "2ND": { primary: "toggleAlternate" },
   CF: { primary: "" },
   NPV: { primary: "" },
   IRR: { primary: "" },
@@ -24,7 +24,7 @@ export const buttonFuncs = {
   "1/𝑥": { primary: "instantOperation" },
   "÷": { primary: "infixOperation", secondary: "RAND" },
   // row 5
-  INV: { primary: "setMode", secondary: "HYP" },
+  INV: { primary: "toggleAlternate", secondary: "HYP" },
   "(": { primary: "", secondary: "SIN" },
   ")": { primary: "", secondary: "COS" },
   yᵡ: { primary: "infixOperation", secondary: "TAN" },
@@ -67,7 +67,7 @@ export const buttonFuncs = {
   "K": { primary: ""},
   "RAND": { primary: "instantOperation"},
   // row 5
-  "HYP": { primary: "setMode"},
+  "HYP": { primary: "toggleAlternate"},
   "SIN": { primary: "instantOperation"},
   "COS": { primary: "instantOperation"},
   "TAN": { primary: "instantOperation"},

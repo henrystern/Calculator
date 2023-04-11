@@ -31,10 +31,17 @@ export class Calculator {
   }
 
   getAlternateButton(primaryButton, indicator, mode) {
-    this.indicators[indicator] = false;
+    if (!["2ND", "INV", "HYP"].includes(primaryButton)) {
+      this.indicators[indicator] = false;
+    }
     return this.buttonFuncs[primaryButton].hasOwnProperty(mode)
       ? this.buttonFuncs[primaryButton][mode]
       : primaryButton;
+  }
+
+  toggleAlternate(indicator) {
+    indicator = indicator === "2ND" ? indicator.toLowerCase() : indicator;
+    this.indicators[indicator] = !this.indicators[indicator]
   }
 
   handleKey(key) {
@@ -71,10 +78,6 @@ export class Calculator {
       this.currentOperand =
         this.currentOperand === "" ? " " : this.currentOperand;
     }
-  }
-
-  toggleSecondary() {
-    this.indicators["2nd"] = !this.indicators["2nd"];
   }
 
   appendNumber(number) {
@@ -238,7 +241,6 @@ export class Calculator {
   }
 
   updateDisplay() {
-    console.log(this.previousOperand, this.operation, this.currentOperand);
     this.displayNumbers.innerText = this.getDisplayNumber();
 
     this.displayIndicators.forEach((indicator) => {
