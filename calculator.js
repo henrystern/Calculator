@@ -189,17 +189,28 @@ export class Calculator {
 
   getDisplayNumber() {
     let display_number;
-    if (isNumber(this.currentOperand)){
-      display_number = this.formatNumberCommas(this.currentOperand);
-    } else if (this.previousOperand === "") {
+    if (this.currentOperand) {
+      if (isNumber(this.currentOperand) || this.currentOperand === ".") {
+        display_number = this.formatNumberCommas(this.currentOperand);
+      }
+      else {
+        display_number = this.currentOperand;
+      }
+    } 
+    else if (this.previousOperand) {
+      if (isNumber(this.previousOperand)) {
+        display_number = this.formatNumberCommas(
+          this.previousOperand.toFixed(this.settings["decimals"])
+        );
+      }
+      else {
+        display_number = this.previousOperand;
+
+      }
+    } 
+    else {
       display_number = Number(0).toFixed(this.settings["decimals"]);
-    } else if (isNumber(this.previousOperand)) {
-      display_number = this.formatNumberCommas(
-        this.previousOperand.toFixed(this.settings["decimals"])
-      );
-    } else {
-      display_number = this.previousOperand;
-    }
+    } 
     return display_number;
   }
 
@@ -207,15 +218,21 @@ export class Calculator {
     const stringNumber = number.toString();
     const integerDigits = parseFloat(stringNumber.split(".")[0]);
     const decimalDigits = stringNumber.split(".")[1];
-    let integerDisplay;
-    integerDisplay = integerDigits.toLocaleString("en", {
-      maximumFractionDigits: 0,
-    });
-    if (decimalDigits != null) {
-      return `${integerDisplay}.${decimalDigits}`;
-    } else {
-      return integerDisplay;
+
+    let integerDisplay = "";
+    if (!isNaN(integerDigits)) {
+      integerDisplay += integerDigits.toLocaleString("en", {
+        maximumFractionDigits: 0,
+      });
     }
+    else {
+      integerDisplay += "0"
+    }
+    if (decimalDigits !== undefined) {
+      integerDisplay += "." + decimalDigits;
+    }
+
+    return integerDisplay;
   }
 
   updateDisplay() {
