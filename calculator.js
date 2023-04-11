@@ -19,7 +19,9 @@ export class Calculator {
 
   handleButton(button) {
     if (!this.buttonFuncs.hasOwnProperty(button)) return;
-    button = this.indicators["2nd"] ? this.getSecondaryButton(button) : button;
+    button = this.indicators["2nd"] ? this.getAlternateButton(button, "2nd", "secondary") : button;
+    button = this.indicators["INV"] ? this.getAlternateButton(button, "INV", "inverse") : button;
+    button = this.indicators["HYP"] ? this.getAlternateButton(button, "HYP", "hyperbolic") : button;
     let method = this.buttonFuncs[button].hasOwnProperty(this.calculatorMode)
       ? this.buttonFuncs[button][this.calculatorMode]
       : this.buttonFuncs[button]["primary"];
@@ -28,10 +30,10 @@ export class Calculator {
     if (button !== "ON|OFF") this.updateDisplay();
   }
 
-  getSecondaryButton(primaryButton) {
-    this.indicators["2nd"] = false;
-    return this.buttonFuncs[primaryButton].hasOwnProperty("secondary")
-      ? this.buttonFuncs[primaryButton]["secondary"]
+  getAlternateButton(primaryButton, indicator, mode) {
+    this.indicators[indicator] = false;
+    return this.buttonFuncs[primaryButton].hasOwnProperty(mode)
+      ? this.buttonFuncs[primaryButton][mode]
       : primaryButton;
   }
 
