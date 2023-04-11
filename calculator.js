@@ -1,59 +1,65 @@
-import { primaryToSecondary, buttonFuncs, keyFuncs } from "./mappings.js";
+import { buttonFuncs, keyFuncs, indicators, settings } from "./constants.js";
 
 export class Calculator {
-  constructor(indicators, letters, numbers) {
-    this.displayIndicators = indicators;
-    this.displayLetters = letters;
-    this.displayNumbers = numbers;
+  constructor(indicatorsElement, lettersElement, numbersElement) {
+    this.displayIndicators = indicatorsElement;
+    this.displayLetters = lettersElement;
+    this.displayNumbers = numbersElement;
 
-    this.secondaryButtons = primaryToSecondary;
     this.buttonFuncs = buttonFuncs;
     this.keyFuncs = keyFuncs;
+    this.indicators = indicators;
+    this.settings = settings;
+    this.memory = Array(10).fill(0);
 
+    this.command = "";
     this.calculatorMode = "primary";
-    this.indicators = {
-      "2nd": false,
-      INV: false,
-      HYP: false,
-      COMPUTE: false,
-      ENTER: false,
-      SET: false,
-      "⇅": false,
-      DEL: false,
-      INS: false,
-      BGN: false,
-      RAD: false,
-      "◁": false,
-      "⁎": false,
-    };
-
     this.clear();
   }
 
   handleButton(button) {
     if (!this.buttonFuncs.hasOwnProperty(button)) return;
-    if (this.indicators["2nd"] && button != "2ND") {
-      if (this.buttonFuncs[button].hasOwnProperty("secondary")) {
-        this[this.buttonFuncs[button]["secondary"]](
-          this.secondaryButtons[button]
-        );
-      }
-      this.toggleSecondary();
-    } else {
-      this[this.buttonFuncs[button][this.calculatorMode]](button);
-    }
-    this.updateDisplay();
+    button = this.indicators["2nd"] ? this.getSecondaryButton(button) : button;
+    let method = this.buttonFuncs[button].hasOwnProperty(this.calculatorMode)
+      ? this.buttonFuncs[button][this.calculatorMode]
+      : this.buttonFuncs[button]["primary"];
+    if (!this.indicators["On"] && method !== "toggleOn") return;
+    this[method](button);
+    if (button !== "ON|OFF") this.updateDisplay();
+  }
+
+  getSecondaryButton(primaryButton) {
+    this.indicators["2nd"] = false;
+    return this.buttonFuncs[primaryButton].hasOwnProperty("secondary")
+      ? this.buttonFuncs[primaryButton]["secondary"]
+      : primaryButton;
   }
 
   handleKey(key) {
-    if (this.keyFuncs.hasOwnProperty(key)) {
-      this.handleButton(this.keyFuncs[key]);
+    let sendButton;
+    if (key.length === 1) {
+      this.command += key;
+      if (this.buttonFuncs.hasOwnProperty(this.command)) {
+        sendButton = this.command;
+      }
+      if (this.keyFuncs.hasOwnProperty(this.command)) {
+        sendButton = this.keyFuncs[this.command];
+      }
+    } else {
+      if (this.keyFuncs.hasOwnProperty(key)) {
+        sendButton = this.keyFuncs[key];
+      }
+    }
+    if (sendButton) {
+      this.handleButton(sendButton);
+      this.command = "";
     }
   }
 
   clear() {
     this.currentOperand = "";
     this.previousOperand = "";
+    this.command = "";
     this.operation = undefined;
   }
 
@@ -70,7 +76,8 @@ export class Calculator {
   }
 
   appendNumber(number) {
-    if (number === "." && this.currentOperand.includes(".")) return;
+    let hasDecimal = this.currentOperand % 1 !== 0
+    if (number === "." && hasDecimal) return;
     this.currentOperand = this.currentOperand.toString() + number.toString();
   }
 
@@ -85,21 +92,31 @@ export class Calculator {
     }
   }
 
-  instantOperation(operation) {
+  prefixOperation(operation) {
+    if (this.operation !== undefined) {
+      this.previous_operation = this.operation;
+    }
+    this.operation = operation;
+  }
+
+  infixOperation(operation) {
+    this.operation = operation;
+    if (this.currentOperand === "") return;
+    if (this.previousOperand !== "") {
+      this.compute();
+    } else {
+      this.previousOperand = parseFloat(this.currentOperand);
+      this.currentOperand = "";
+    }
+  }
+
+  postfixOperation(operation) {
     this.operation = operation;
     if (this.currentOperand === "") {
       this.currentOperand = this.previousOperand;
       this.previousOperand = "";
     }
     if (this.currentOperand) this.compute();
-  }
-
-  infixOperation(operation) {
-    this.operation = operation;
-    if (this.currentOperand === "") return;
-    if (this.previousOperand !== "") this.compute();
-    this.previousOperand = this.currentOperand;
-    this.currentOperand = "";
   }
 
   compute() {
@@ -127,13 +144,11 @@ export class Calculator {
           computation = "Error 2";
           break;
         }
-        let k = BigInt(prev - current);
-        let n = BigInt(prev);
-        // let perms = this.permutate(n, k);
-        computation = typeof perms === "BigInt" ? perms : "Error 2";
         break;
       case "nCr":
-        // let combs = this.factorial(prev) / (this.factorial(current) * this.factorial(prev - current))
+        let combs =
+          this.factorial(prev) /
+          (this.factorial(current) * this.factorial(prev - current));
         computation = typeof combs === "number" ? combs : "Error 2";
         break;
       case "%":
@@ -154,26 +169,48 @@ export class Calculator {
       case "eᵡ":
         computation = Math.E ** current;
         break;
-      default:
+      case "STO":
+        this.memory[current] = prev;
+        computation = prev;
+        break;
+      case "RCL":
+        this.currentOperand = this.memory[current];
+        this.operation = this.previous_operation;
+        this.previous_operation = undefined;
         return;
+      default:
+        computation = current;
+        break;
     }
     this.currentOperand = "";
     this.operation = undefined;
     this.previousOperand = computation;
   }
 
-  getDisplayNumber(number) {
+  getDisplayNumber() {
+    let display_number;
+    if (isNumber(this.currentOperand)){
+      display_number = this.formatNumberCommas(this.currentOperand);
+    } else if (this.previousOperand === "") {
+      display_number = Number(0).toFixed(this.settings["decimals"]);
+    } else if (isNumber(this.previousOperand)) {
+      display_number = this.formatNumberCommas(
+        this.previousOperand.toFixed(this.settings["decimals"])
+      );
+    } else {
+      display_number = this.previousOperand;
+    }
+    return display_number;
+  }
+
+  formatNumberCommas(number) {
     const stringNumber = number.toString();
     const integerDigits = parseFloat(stringNumber.split(".")[0]);
     const decimalDigits = stringNumber.split(".")[1];
     let integerDisplay;
-    if (isNaN(integerDigits)) {
-      integerDisplay = "";
-    } else {
-      integerDisplay = integerDigits.toLocaleString("en", {
-        maximumFractionDigits: 0,
-      });
-    }
+    integerDisplay = integerDigits.toLocaleString("en", {
+      maximumFractionDigits: 0,
+    });
     if (decimalDigits != null) {
       return `${integerDisplay}.${decimalDigits}`;
     } else {
@@ -183,10 +220,7 @@ export class Calculator {
 
   updateDisplay() {
     console.log(this.previousOperand, this.operation, this.currentOperand);
-    this.displayNumbers.innerText =
-      this.currentOperand !== ""
-        ? this.getDisplayNumber(this.currentOperand)
-        : this.getDisplayNumber(this.previousOperand);
+    this.displayNumbers.innerText = this.getDisplayNumber();
 
     this.displayIndicators.forEach((indicator) => {
       const display_active = indicator.classList.contains("active");
@@ -194,4 +228,27 @@ export class Calculator {
       if (display_active != calc_active) indicator.classList.toggle("active");
     });
   }
+
+  toggleOn() {
+    if (this.indicators["On"]) {
+      this.indicators["On"] = false;
+      this.clearDisplay();
+    } else {
+      this.indicators["On"] = true;
+      this.updateDisplay();
+    }
+  }
+
+  clearDisplay() {
+    this.clear()
+    this.displayNumbers.innerText = "";
+    this.displayLetters.innerText = "";
+    this.displayIndicators.forEach((indicator) => {
+      indicator.classList.remove("active");
+    });
+  }
+}
+
+function isNumber(x) {
+  return !isNaN(x) && x !== "";
 }
