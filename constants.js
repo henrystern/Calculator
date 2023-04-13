@@ -18,10 +18,10 @@ export const buttonFuncs = {
   PMT: { primary: "", secondary: "BGN" },
   FV: { primary: "", secondary: "CLR TVM" },
   // row 4
-  "%": { primary: "instantOperation", secondary: "K" },
-  "√𝑥": { primary: "instantOperation" },
-  "𝑥²": { primary: "instantOperation" },
-  "1/𝑥": { primary: "instantOperation" },
+  "%": { primary: "postfixOperation", secondary: "K" },
+  "√𝑥": { primary: "postfixOperation" },
+  "𝑥²": { primary: "postfixOperation" },
+  "1/𝑥": { primary: "postfixOperation" },
   "÷": { primary: "infixOperation", secondary: "RAND" },
   // row 5
   INV: { primary: "toggleAlternate", secondary: "HYP" },
@@ -30,7 +30,7 @@ export const buttonFuncs = {
   yᵡ: { primary: "infixOperation", secondary: "TAN" },
   "×": { primary: "infixOperation", secondary: "𝑥!" },
   // row 6
-  LN: { primary: "instantOperation", secondary: "eᵡ" },
+  LN: { primary: "postfixOperation", secondary: "eᵡ" },
   7: { primary: "appendNumber", secondary: "DATA" },
   8: { primary: "appendNumber", secondary: "STAT" },
   9: { primary: "appendNumber", secondary: "BOND" },
@@ -65,21 +65,21 @@ export const buttonFuncs = {
   "CLR TVM": { primary: "clearMemory"},
   // row 4
   "K": { primary: ""},
-  "RAND": { primary: "instantOperation"},
+  "RAND": { primary: "postfixOperation"},
   // row 5
   "HYP": { primary: "toggleAlternate"},
-  "SIN": { primary: "instantOperation"},
-  "COS": { primary: "instantOperation"},
-  "TAN": { primary: "instantOperation"},
-  "𝑥!": { primary: "instantOperation" },
+  "SIN": { primary: "postfixOperation"},
+  "COS": { primary: "postfixOperation"},
+  "TAN": { primary: "postfixOperation"},
+  "𝑥!": { primary: "postfixOperation" },
   // row 6
-  "eᵡ": { primary: "instantOperation" },
+  "eᵡ": { primary: "postfixOperation" },
   "DATA": { primary: "selectSheet"},
   "STAT": { primary: "selectSheet"},
   "BOND": { primary: "selectSheet"},
   "nPr": { primary: "infixOperation" },
   // row 7
-  "ROUND": { primary: "instantOperation"},
+  "ROUND": { primary: "postfixOperation"},
   "DEPR": { primary: "selectSheet"},
   "◺%": { primary: "selectSheet" },
   "BRKEVN": { primary: "selectSheet"},
