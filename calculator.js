@@ -31,10 +31,9 @@ export class Calculator {
   }
 
   getAlternateButton(primaryButton, indicator, mode) {
-    if (indicator === "2nd" && primaryButton !== "2ND") {
-      this.indicators[indicator] = false;
-    }
-    else if (!["2ND", "INV", "HYP"].includes(primaryButton)) {
+    const is_toggle_button = ["2ND", "INV", "HYP"].includes(primaryButton)
+    const is_secondary = indicator === "2nd" && primaryButton === "2ND"
+    if (!is_toggle_button || !is_secondary) {
       this.indicators[indicator] = false;
     }
     return this.buttonFuncs[primaryButton].hasOwnProperty(mode)
