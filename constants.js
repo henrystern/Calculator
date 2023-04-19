@@ -1,15 +1,15 @@
 export const buttonFuncs = {
   // row 1
-  CPT: { primary: "", secondary: "ENTER" },
+  CPT: { primary: "setMode", secondary: "ENTER" },
   ENTER: { primary: "", secondary: "SET" },
   "↑": { primary: "", secondary: "DEL" },
   "↓": { primary: "", secondary: "INS" },
   "ON|OFF": { primary: "toggleOn" },
   // row 2
   "2ND": { primary: "toggleAlternate" },
-  CF: { primary: "" },
-  NPV: { primary: "" },
-  IRR: { primary: "" },
+  CF: { primary: "", recall: "getMemory" },
+  NPV: { primary: "", recall: "getMemory" },
+  IRR: { primary: "", recall: "getMemory" },
   "→": { primary: "delete" },
   // row 3
   N: { primary: "", secondary: "xP/Y" },
@@ -31,25 +31,25 @@ export const buttonFuncs = {
   "×": { primary: "infixOperation", secondary: "𝑥!" },
   // row 6
   LN: { primary: "postfixOperation", secondary: "eᵡ" },
-  7: { primary: "appendNumber", secondary: "DATA" },
-  8: { primary: "appendNumber", secondary: "STAT" },
-  9: { primary: "appendNumber", secondary: "BOND" },
+  7: { primary: "appendNumber", secondary: "DATA", recall: "getMemory", store: "setMemory" },
+  8: { primary: "appendNumber", secondary: "STAT", recall: "getMemory", store: "setMemory" },
+  9: { primary: "appendNumber", secondary: "BOND", recall: "getMemory", store: "setMemory" },
   "-": { primary: "infixOperation", secondary: "nPr" },
   // row 7
   STO: { primary: "setMode", secondary: "ROUND" },
-  4: { primary: "appendNumber", secondary: "DEPR" },
-  5: { primary: "appendNumber", secondary: "◺%" },
-  6: { primary: "appendNumber", secondary: "BRKEVN" },
+  4: { primary: "appendNumber", secondary: "DEPR", recall: "getMemory", store: "setMemory" },
+  5: { primary: "appendNumber", secondary: "◺%", recall: "getMemory", store: "setMemory" },
+  6: { primary: "appendNumber", secondary: "BRKEVN", recall: "getMemory", store: "setMemory" },
   "+": { primary: "infixOperation", secondary: "nCr" },
   // row 8
   RCL: { primary: "setMode" },
-  1: { primary: "appendNumber", secondary: "DATE" },
-  2: { primary: "appendNumber", secondary: "ICONV" },
-  3: { primary: "appendNumber", secondary: "PROFIT" },
-  "=": { primary: "compute", secondary: "ANS" },
+  1: { primary: "appendNumber", secondary: "DATE", recall: "getMemory", store: "setMemory" },
+  2: { primary: "appendNumber", secondary: "ICONV", recall: "getMemory", store: "setMemory" },
+  3: { primary: "appendNumber", secondary: "PROFIT", recall: "getMemory", store: "setMemory" },
+  "=": { primary: "compute", secondary: "ANS", recall: "getMemory" },
   // row 9
   "CE|C": { primary: "clear", secondary: "CLR WORK" },
-  0: { primary: "appendNumber", secondary: "MEM" },
+  0: { primary: "appendNumber", secondary: "MEM", recall: "getMemory", store: "setMemory" },
   ".": { primary: "appendNumber", secondary: "FORMAT" },
   "+|-": { primary: "changeSign", secondary: "RESET" },
 
@@ -88,7 +88,7 @@ export const buttonFuncs = {
   "DATE": { primary: "selectSheet"},
   "ICONV": { primary: "selectSheet"},
   "PROFIT": { primary: "selectSheet"},
-  "ANS": { primary: "viewMemory"},
+  "ANS": { primary: "getMemory"},
   // row 9
   "CLR WORK": { primary: "clearMemory"},
   "MEM": { primary: "viewMemory"},
@@ -137,3 +137,22 @@ export const settings = {
     separator: "US",
     method: "Chn",
 };
+
+export const memory = {
+  ANS: "",
+  0: "",
+  1: "",
+  2: "",
+  3: "",
+  4: "",
+  5: "",
+  6: "",
+  7: "",
+  8: "",
+  9: "",
+  N: "",
+  "I/Y": "",
+  PV: "",
+  PMT: "",
+  FV: ""
+}

@@ -1,4 +1,10 @@
-import { buttonFuncs, keyFuncs, indicators, settings } from "./constants.js";
+import {
+  buttonFuncs,
+  keyFuncs,
+  indicators,
+  settings,
+  memory,
+} from "./constants.js";
 
 export class Calculator {
   constructor(indicatorsElement, lettersElement, numbersElement) {
@@ -10,7 +16,7 @@ export class Calculator {
     this.keyFuncs = keyFuncs;
     this.indicators = indicators;
     this.settings = settings;
-    this.memory = Array(10).fill(0);
+    this.memory = memory;
 
     this.command = "";
     this.calculatorMode = "primary";
@@ -19,31 +25,44 @@ export class Calculator {
 
   handleButton(button) {
     if (!this.buttonFuncs.hasOwnProperty(button)) return;
-    button = this.indicators["2nd"] ? this.getAlternateButton(button, "2nd", "secondary") : button;
-    button = this.indicators["INV"] ? this.getAlternateButton(button, "INV", "inverse") : button;
-    button = this.indicators["HYP"] ? this.getAlternateButton(button, "HYP", "hyperbolic") : button;
-    let method = this.buttonFuncs[button].hasOwnProperty(this.calculatorMode)
-      ? this.buttonFuncs[button][this.calculatorMode]
-      : this.buttonFuncs[button]["primary"];
+    button = this.indicators["2nd"]
+      ? this.getAlternateButton(button, "2nd", "secondary")
+      : button;
+    button = this.indicators["INV"]
+      ? this.getAlternateButton(button, "INV", "inverse")
+      : button;
+    button = this.indicators["HYP"]
+      ? this.getAlternateButton(button, "HYP", "hyperbolic")
+      : button;
+    let method = this.getButtonMethod(button);
     if (!this.indicators["On"] && method !== "toggleOn") return;
+    console.log(method)
+    this.calculatorMode = "primary";
     this[method](button);
     if (button !== "ON|OFF") this.updateDisplay();
   }
 
   getAlternateButton(primaryButton, indicator, mode) {
-    const is_toggle_button = ["2ND", "INV", "HYP"].includes(primaryButton)
-    const secondary_needs_reset = indicator === "2nd" && primaryButton !== "2ND"
+    const is_toggle_button = ["2ND", "INV", "HYP"].includes(primaryButton);
+    const secondary_needs_reset =
+      indicator === "2nd" && primaryButton !== "2ND";
     if (!is_toggle_button || secondary_needs_reset) {
-     this.indicators[indicator] = false;
+      this.indicators[indicator] = false;
     }
     return this.buttonFuncs[primaryButton].hasOwnProperty(mode)
       ? this.buttonFuncs[primaryButton][mode]
       : primaryButton;
   }
 
+  getButtonMethod(button) {
+    return this.buttonFuncs[button].hasOwnProperty(this.calculatorMode)
+      ? this.buttonFuncs[button][this.calculatorMode]
+      : this.buttonFuncs[button]["primary"];
+  }
+
   toggleAlternate(indicator) {
     indicator = indicator === "2ND" ? indicator.toLowerCase() : indicator;
-    this.indicators[indicator] = !this.indicators[indicator]
+    this.indicators[indicator] = !this.indicators[indicator];
   }
 
   handleKey(key) {
@@ -67,6 +86,19 @@ export class Calculator {
     }
   }
 
+  setMode(button) {
+    switch (button) {
+      case "STO":
+        this.calculatorMode = "store";
+        break;
+      case "RCL":
+        this.calculatorMode = "recall";
+        break;
+      case "CPT":
+        this.calculatorMode = "compute";
+    }
+  }
+
   clear() {
     this.currentOperand = "";
     this.previousOperand = "";
@@ -83,7 +115,7 @@ export class Calculator {
   }
 
   appendNumber(number) {
-    let hasDecimal = this.currentOperand % 1 !== 0
+    let hasDecimal = this.currentOperand % 1 !== 0;
     if (number === "." && hasDecimal) return;
     this.currentOperand = this.currentOperand.toString() + number.toString();
   }
@@ -176,15 +208,6 @@ export class Calculator {
       case "eᵡ":
         computation = Math.E ** current;
         break;
-      case "STO":
-        this.memory[current] = prev;
-        computation = prev;
-        break;
-      case "RCL":
-        this.currentOperand = this.memory[current];
-        this.operation = this.previous_operation;
-        this.previous_operation = undefined;
-        return;
       default:
         computation = current;
         break;
@@ -192,6 +215,16 @@ export class Calculator {
     this.currentOperand = "";
     this.operation = undefined;
     this.previousOperand = computation;
+    this.setMemory("ANS", computation)
+  }
+
+  setMemory(register, value=null) {
+    this.memory[register] = value ? value : this.currentOperand;
+  }
+
+  getMemory(register) {
+    register = register === "=" ? "ANS" : register
+    this.currentOperand = this.memory[register]
   }
 
   getDisplayNumber() {
@@ -199,25 +232,20 @@ export class Calculator {
     if (this.currentOperand) {
       if (isNumber(this.currentOperand) || this.currentOperand === ".") {
         display_number = this.formatNumberCommas(this.currentOperand);
-      }
-      else {
+      } else {
         display_number = this.currentOperand;
       }
-    } 
-    else if (this.previousOperand) {
+    } else if (this.previousOperand) {
       if (isNumber(this.previousOperand)) {
         display_number = this.formatNumberCommas(
           this.previousOperand.toFixed(this.settings["decimals"])
         );
-      }
-      else {
+      } else {
         display_number = this.previousOperand;
-
       }
-    } 
-    else {
+    } else {
       display_number = Number(0).toFixed(this.settings["decimals"]);
-    } 
+    }
     return display_number;
   }
 
@@ -231,9 +259,8 @@ export class Calculator {
       integerDisplay += integerDigits.toLocaleString("en", {
         maximumFractionDigits: 0,
       });
-    }
-    else {
-      integerDisplay += "0"
+    } else {
+      integerDisplay += "0";
     }
     if (decimalDigits !== undefined) {
       integerDisplay += "." + decimalDigits;
@@ -263,7 +290,7 @@ export class Calculator {
   }
 
   clearDisplay() {
-    this.clear()
+    this.clear();
     this.displayNumbers.innerText = "";
     this.displayLetters.innerText = "";
     this.displayIndicators.forEach((indicator) => {
